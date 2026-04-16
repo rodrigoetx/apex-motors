@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+
 
 const words = [
   'PERFORMANCE', '·', 'PRECISION', '·', 'LUXURY', '·', 'INNOVATION', '·',

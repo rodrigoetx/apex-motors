@@ -1,14 +1,11 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 interface NavbarProps {
-  activeIndex: number;
-  total: number;
-  onNav: (i: number) => void;
   carName: string;
   onHover: (h: boolean) => void;
 }
 
-export default function Navbar({ activeIndex, total, onNav, carName, onHover }: NavbarProps) {
+export default function Navbar({ carName, onHover }: NavbarProps) {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 md:px-16 py-8">
       {/* Logo */}

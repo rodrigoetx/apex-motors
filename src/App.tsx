@@ -92,9 +92,6 @@ export default function App() {
     <div className="noise">
       <Cursor isHovered={isHovered} />
       <Navbar
-        activeIndex={activeIndex}
-        total={CARS.length}
-        onNav={scrollToIndex}
         carName={CARS[activeIndex].slug.toUpperCase()}
         onHover={setIsHovered}
       />

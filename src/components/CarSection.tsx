@@ -18,11 +18,15 @@ interface Props {
   onHover: (h: boolean) => void;
 }
 
-const textReveal = {
+const textReveal: any = {
   hidden: { y: '110%' },
   visible: (i: number) => ({
     y: '0%',
-    transition: { duration: 0.9, delay: i * 0.075, ease: [0.16, 1, 0.3, 1] },
+    transition: {
+      duration: 0.9,
+      delay: i * 0.075,
+      ease: [0.16, 1, 0.3, 1]
+    },
   }),
 };
 
@@ -33,7 +37,7 @@ export default function CarSection({ car, isActive, onHover }: Props) {
     const vid = videoRef.current;
     if (!vid) return;
     if (isActive) {
-      vid.play().catch(() => {});
+      vid.play().catch(() => { });
     } else {
       vid.pause();
     }
@@ -140,7 +144,7 @@ export default function CarSection({ car, isActive, onHover }: Props) {
                 >
                   Configure Yours
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </button>
                 <button
