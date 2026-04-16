@@ -1,94 +1,126 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import Cursor from './components/Cursor';
+import Navbar from './components/Navbar';
+import CarSection from './components/CarSection';
+import SideNav from './components/SideNav';
+import MarqueeBar from './components/MarqueeBar';
 
-const videos = [
+const CARS = [
   {
     id: 1,
-    url: "https://videos.pexels.com/video-files/3760810/3760810-hd_1920_1080_24fps.mp4",
-    title: "THE APEX_R1",
-    subtitle: "Precision Meets Power.",
+    slug: 'apex-r1',
+    name: 'APEX R1',
+    tagline: 'The Genesis',
+    description:
+      'Born from the obsession of twelve engineers who refused limits. The R1 channels 780 horsepower through active aerodynamics that transform at the speed of thought.',
+    specs: [
+      { value: '780', label: 'Horsepower' },
+      { value: '2.7s', label: '0–100 km/h' },
+      { value: '342', label: 'Top KM/H' },
+    ],
+    videoSrc: '/videos/car1.mp4',
+    accentColor: '#C9A84C',
   },
   {
     id: 2,
-    url: "https://videos.pexels.com/video-files/5309650/5309650-hd_1920_1080_25fps.mp4",
-    title: "NEO_CLASSIC",
-    subtitle: "Timeless Elegance.",
+    slug: 'phantom-gt',
+    name: 'PHANTOM GT',
+    tagline: 'Total Mastery',
+    description:
+      'Grand touring redefined. The Phantom GT wraps you in hand-stitched Italian leather while 680hp sculpts the horizon. Distance is irrelevant at this altitude.',
+    specs: [
+      { value: '680', label: 'Horsepower' },
+      { value: '3.1s', label: '0–100 km/h' },
+      { value: '315', label: 'Top KM/H' },
+    ],
+    videoSrc: '/videos/car2.mp4',
+    accentColor: '#B8C5D6',
   },
   {
     id: 3,
-    url: "https://videos.pexels.com/video-files/3752531/3752531-hd_1920_1080_24fps.mp4",
-    title: "PHANTOM_GT",
-    subtitle: "Unleash The Beast.",
-  }
+    slug: 'neo-zephyr',
+    name: 'NEO ZEPHYR',
+    tagline: 'Electric Fury',
+    description:
+      'All-electric. Zero compromise. The Zephyr delivers 1,020hp silently — until 200km/h when the synthetic exhaust note awakens. The future sounds like this.',
+    specs: [
+      { value: '1020', label: 'Horsepower' },
+      { value: '1.9s', label: '0–100 km/h' },
+      { value: '380', label: 'Top KM/H' },
+    ],
+    videoSrc: '/videos/car3.mp4',
+    accentColor: '#56CFE1',
+  },
 ];
 
 export default function App() {
-  const [activeIdx, setActiveIdx] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // IntersectionObserver: detect which section is in view
+  useEffect(() => {
+    const sections = containerRef.current?.querySelectorAll<HTMLElement>('.snap-section');
+    if (!sections) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const idx = Number((entry.target as HTMLElement).dataset.index);
+            setActiveIndex(idx);
+          }
+        });
+      },
+      { threshold: 0.55 }
+    );
+
+    sections.forEach((s, i) => {
+      s.dataset.index = String(i);
+      observer.observe(s);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const scrollToIndex = (i: number) => {
+    const sections = containerRef.current?.querySelectorAll('.snap-section');
+    sections?.[i]?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
-    <main className="relative w-screen h-screen overflow-hidden bg-black">
-      {/* Video Backgrounds */}
-      {videos.map((vid, i) => (
-        <video
-          key={vid.id}
-          src={vid.url}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
-            i === activeIdx ? 'opacity-60 scale-100' : 'opacity-0 scale-105'
-          }`}
-        />
-      ))}
+    <div className="noise">
+      <Cursor isHovered={isHovered} />
+      <Navbar
+        activeIndex={activeIndex}
+        total={CARS.length}
+        onNav={scrollToIndex}
+        carName={CARS[activeIndex].slug.toUpperCase()}
+        onHover={setIsHovered}
+      />
+      <SideNav
+        total={CARS.length}
+        activeIndex={activeIndex}
+        onSelect={scrollToIndex}
+        onHover={setIsHovered}
+      />
 
-      {/* Overlay UI */}
-      <div className="absolute inset-0 z-10 flex flex-col justify-between p-8 md:p-16">
-        {/* Header */}
-        <header className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold tracking-widest text-white cursor-pointer hover:text-gray-300 transition-colors">
-            APEX
-          </h1>
-          <nav className="hidden md:flex gap-8 text-sm font-medium tracking-widest uppercase">
-            {['Models', 'Technology', 'Bespoke', 'Contact'].map((item) => (
-              <a key={item} href={`#${item}`} className="hover:text-gray-400 transition-colors">
-                {item}
-              </a>
-            ))}
-          </nav>
-          <button className="md:hidden text-white uppercase text-sm tracking-widest">
-            Menu
-          </button>
-        </header>
-
-        {/* Center Content */}
-        <div className="flex flex-col md:flex-row justify-between items-end pb-8">
-          <div className="flex flex-col gap-2 max-w-xl">
-            <h2 className="text-sm md:text-md uppercase tracking-[0.3em] text-gray-300 mb-2">
-              {videos[activeIdx].subtitle}
-            </h2>
-            <h3 className="text-5xl md:text-8xl font-black text-white uppercase tracking-tighter leading-none text-gradient">
-              {videos[activeIdx].title}
-            </h3>
-            <button className="mt-8 self-start px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white uppercase tracking-widest text-xs transition-all duration-300">
-              Discover Model
-            </button>
-          </div>
-
-          {/* Navigation Controls */}
-          <div className="flex gap-4 mt-12 md:mt-0">
-            {videos.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setActiveIdx(i)}
-                className={`h-1 transition-all duration-500 ease-out ${
-                  i === activeIdx ? 'w-16 bg-white' : 'w-8 bg-white/30 hover:bg-white/60'
-                }`}
-                aria-label={`Show video ${i + 1}`}
-              />
-            ))}
-          </div>
-        </div>
+      <div
+        ref={containerRef}
+        className="h-screen overflow-y-scroll"
+        style={{ scrollSnapType: 'y mandatory' }}
+      >
+        {CARS.map((car, i) => (
+          <CarSection
+            key={car.id}
+            car={car}
+            isActive={activeIndex === i}
+            onHover={setIsHovered}
+          />
+        ))}
       </div>
-    </main>
+
+      <MarqueeBar />
+    </div>
   );
 }
